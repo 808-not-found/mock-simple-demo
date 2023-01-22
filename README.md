@@ -1,52 +1,25 @@
-# 接口测试-续2
+# 函数测试
 
-再次运行 `go test`
+这次我们甚至没有 `main.go` 里面代码非常简单，请快速浏览。
 
-```
-exit status 1
-FAIL    mock-simple-demo        0.003s
-```
+测试代码在 `bad_test.go` 也十分简单。
 
-我们明明没有更改我们的代码，却出错了，原来是有人不小心修改了 `text.txt` 的内容。
-
-真实情况中，你可能需要连接数据库，但是你不想启动数据库。于是就有了 mock 测试，对于接口的 mock 测试，我们采用 `testify/mock` 并使用 `mockery` 生成代码。
-
-现在我们使用 `mockery --all`，你会发现创建了一个 `mocks` 文件夹，里面的内容我们完全不用修改。
-
-接下来，你需要将 `TestReverseOutput` 这个函数修改为：
-
-```go
-import (
-	"mock-simple-demo/mocks"
-	"strings"
-	"testing"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
-)
-func TestReverseOutput(t *testing.T) {
-    // 创建一个新的 mock 接口，mocks.NewXxx(t)
-	mockFile := mocks.NewFile(t)
-	str := "你好\n世界"
-    // 新的接口注册函数，函数名的字符串，接收的参数类型，返回一个匿名函数作为我们偷梁换柱的函数
-	mockFile.On("GetContent").Return(func() string {
-		return str
-	})
-	mockFile.On("GetNthLine", mock.AnythingOfType("int")).Return(func(n int) string {
-		lines := strings.Split(str, "\n")
-		return lines[n-1]
-	})
-    // 最后把这个假的接口传给调用函数
-	assert.Equal(t, "世界\n你好\n", ReverseOutput(mockFile))
-}
+`go test -gcflags="all=-l -N" -v ./...` 编译时需要禁用内联和编译优化，否则可能会 mock 失败或者报错
 
 ```
+=== RUN   TestBad
 
-`go run test`:
+  TestMockXXX 
 
-```
+
+0 total assertions
+
+--- PASS: TestBad (0.00s)
 PASS
-ok      mock-simple-demo        0.003s
+ok      mock-simple-demo/bad    (cached)
+?       mock-simple-demo/good   [no test files]
 ```
 
-但是有些时候不好直接 mock 接口，我们需要 mock 一个函数，这怎么办？请查看`w1`
+不支持真正的偷梁换柱成我们自定义逻辑的函数，但是 mock 一般也就是进行固定返回值的 mock
+
+部分简单逻辑的判断可以参考 `[条件mock](https://github.com/bytedance/mockey/issues/5)`
