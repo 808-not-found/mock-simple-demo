@@ -25,8 +25,10 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 func TestReverseOutput(t *testing.T) {
+    // 创建一个新的 mock 接口，mocks.NewXxx(t)
 	mockFile := mocks.NewFile(t)
 	str := "你好\n世界"
+    // 新的接口注册函数，函数名的字符串，接收的参数类型，返回一个匿名函数作为我们偷梁换柱的函数
 	mockFile.On("GetContent").Return(func() string {
 		return str
 	})
@@ -34,6 +36,7 @@ func TestReverseOutput(t *testing.T) {
 		lines := strings.Split(str, "\n")
 		return lines[n-1]
 	})
+    // 最后把这个假的接口传给调用函数
 	assert.Equal(t, "世界\n你好\n", ReverseOutput(mockFile))
 }
 
