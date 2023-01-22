@@ -35,8 +35,7 @@ func (file FileEater) GetNthLine(n int) string {
 
 func main() {
 	file := FileEater{Path: "text.txt"}
-	fmt.Print(file.GetContent())
-	fmt.Print(file.GetNthLine(1))
+	fmt.Print(ReverseOutput(file))
 	/*
 		你好
 		世界你好
