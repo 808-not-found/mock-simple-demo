@@ -48,3 +48,5 @@ func TestReverseOutput(t *testing.T) {
 PASS
 ok      mock-simple-demo        0.003s
 ```
+
+但是有些时候不好直接 mock 接口，我们需要 mock 一个函数，这怎么办？请查看`w1`
